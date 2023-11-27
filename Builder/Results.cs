@@ -1,3 +1,3 @@
-internal record Result(int id, object result, TSOLVETYPE solveType, bool isTest) {
-    public override string ToString() => $"Day {id} ({solveType}{(isTest ? " TEST " : "")}) -> {result})";
+internal record Result(int Id, object Data, TSOLVETYPE SolveType, bool IsTest) {
+    public override string ToString() => $"Day {Id} ({SolveType}{(IsTest ? " TEST " : "")}) -> {Data})";
 }

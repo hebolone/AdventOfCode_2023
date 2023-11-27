@@ -1,4 +1,4 @@
-namespace Builder;
+namespace Days;
 
 internal abstract class Day {
 

@@ -2,5 +2,5 @@
 
 daysBuilder
     .AddDay(1, new Day01())
-    .SetTests(1,2)
+    .SetTests(1, 2)
     .Solve();

@@ -1,3 +1,5 @@
+namespace Days;
+
 internal class Day01 : Day {
 
     public override object Basic() {
