@@ -1,10 +1,11 @@
+using System.Diagnostics;
+
 namespace Builder;
 
 internal class DaysBuilder(string basePath) : IDaysBuilder {
 
     private readonly string _BasePath = basePath;
     private List<int> _TestDays = new();
-    private const int LASTDAY = -1;
     
     private Dictionary<int, Day> _Days = new();
 
@@ -15,9 +16,9 @@ internal class DaysBuilder(string basePath) : IDaysBuilder {
         return this;
     }
 
-    public IDaysBuilder Solve(int id = LASTDAY, TSOLVETYPE solveType = TSOLVETYPE.BOTH) {
+    public IDaysBuilder Solve(int? id = null, TSolveType solveType = TSolveType.BOTH) {
 
-        var idToSolve = id == LASTDAY ? _Days.Keys.Max() : id;
+        var idToSolve = id == null ? _Days.Keys.Max() : (int) id;
         var dayFound = _Days.ContainsKey(idToSolve);
 
         if(dayFound) {
@@ -29,15 +30,15 @@ internal class DaysBuilder(string basePath) : IDaysBuilder {
             //  Get solution
             var results = new List<Result>();
             switch(solveType) {
-                case TSOLVETYPE.BASIC:
+                case TSolveType.BASIC:
                     results.Add(new(idToSolve, solver.Basic(), solveType, isTest));
                     break;
-                case TSOLVETYPE.ADVANCED:
+                case TSolveType.ADVANCED:
                     results.Add(new(idToSolve, solver.Advanced(), solveType, isTest));
                     break;
                 default:
-                    results.Add(new(idToSolve, solver.Basic(), TSOLVETYPE.BASIC, isTest));
-                    results.Add(new(idToSolve, solver.Advanced(), TSOLVETYPE.ADVANCED, isTest));
+                    results.Add(new(idToSolve, solver.Basic(), TSolveType.BASIC, isTest));
+                    results.Add(new(idToSolve, solver.Advanced(), TSolveType.ADVANCED, isTest));
                     break;
             }
 
@@ -66,15 +67,40 @@ internal class DaysBuilder(string basePath) : IDaysBuilder {
 
     #region Private
 
-    private List<string> ReadInput(int id, bool isTest) {
+    private async List<string> ReadInput(int id, bool isTest) {
+        //  Check if file exists
+        var inputFilePath = GetInputFileName(id, isTest);
+        if(!File.Exists(inputFilePath)) {
+            if(!isTest) {
+                bool downloadResult = DownloadInputFromWebSite(id, inputFilePath).GetAwaiter().GetResult();
+                if(!downloadResult)
+                    throw new Exception($"Can't download input file. Contact Sm3P.");
+            } else {
+                throw new FileNotFoundException($"Missing test input file '{inputFilePath}'. Contact Sm3P.");
+            }
+        }
+
         var retValue = new List<string>();
-        var lines = File.ReadLines(GetInputFileName(id, isTest));
+        var lines = File.ReadLines(inputFilePath);
         
         foreach(var line in lines) {
             retValue.Add(line);
         }
 
        return retValue;
+    }
+
+    private async Task<bool> DownloadInputFromWebSite(int id, string filePath) {
+        //  https://adventofcode.com/2022/day/1/input
+        bool isOk = true;
+        const int year = 2023;
+        var uri = $"https://adventofcode.com/{year}/day/{id}/input";
+        var httpClient = new HttpClient();
+        var response = await httpClient.GetAsync(uri);
+        using var fs = new FileStream(filePath, FileMode.CreateNew); 
+        await response.Content.CopyToAsync(fs);
+
+        return isOk;
     }
 
     private string GetInputFileName(int id, bool isTest) => Path.Combine(_BasePath, $"day_{id:00.##}{(isTest ? "_test" : "")}.txt");
