@@ -67,7 +67,7 @@ internal class DaysBuilder(string basePath) : IDaysBuilder {
 
     #region Private
 
-    private async List<string> ReadInput(int id, bool isTest) {
+    private List<string> ReadInput(int id, bool isTest) {
         //  Check if file exists
         var inputFilePath = GetInputFileName(id, isTest);
         if(!File.Exists(inputFilePath)) {
@@ -93,7 +93,7 @@ internal class DaysBuilder(string basePath) : IDaysBuilder {
     private async Task<bool> DownloadInputFromWebSite(int id, string filePath) {
         //  https://adventofcode.com/2022/day/1/input
         bool isOk = true;
-        const int year = 2023;
+        const int year = 2022;
         var uri = $"https://adventofcode.com/{year}/day/{id}/input";
         var httpClient = new HttpClient();
         var response = await httpClient.GetAsync(uri);
