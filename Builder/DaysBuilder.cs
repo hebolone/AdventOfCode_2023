@@ -68,6 +68,7 @@ internal class DaysBuilder(string basePath) : IDaysBuilder {
     #region Private
 
     private List<string> ReadInput(int id, bool isTest) {
+    private List<string> ReadInput(int id, bool isTest) {
         //  Check if file exists
         var inputFilePath = GetInputFileName(id, isTest);
         if(!File.Exists(inputFilePath)) {
