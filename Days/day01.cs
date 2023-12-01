@@ -8,19 +8,23 @@ internal class Day01 : Day {
     public override object Basic() => Parse(Input);
 
     public override object Advanced() {
-        var digits = new List<string>() {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+        Dictionary<string, string> digits = new() {
+          ["one"] = "o1e",
+          ["two"] = "t2o",
+          ["three"] = "t3e",
+          ["four"] = "f4r",
+          ["five"] = "f5e",
+          ["six"] = "s6x",
+          ["seven"] = "s7n",
+          ["eight"] = "e8t",
+          ["nine"] = "n9e"
+        };
         var converted = new List<string>();
         Input.ForEach(line => {
-            var firstOccurrence = line.Length;
-            var indexes = new Dictionary<int, int>();
             foreach(var digit in digits) {
-                if(line.Contains(digit)) {
-                    indexes.Add(line.IndexOf(digit), digits.IndexOf(digit) + 1);
+                if(line.Contains(digit.Key)) {
+                    line = line.Replace(digit.Key, digit.Value);
                 }
-            }
-            
-            foreach(var d in indexes.OrderBy(v => v.Key).Select(i => i.Value)) {
-                line = line.Replace(digits[d - 1], d.ToString());
             }
             converted.Add(line);
         });
