@@ -1,11 +1,8 @@
-using System.Collections.Frozen;
-using System.Globalization;
-
 namespace Days;
 
 internal class Day01 : Day {
 
-    public override object Basic() => Parse(Input);
+    public override object Basic() => GetFirstAndLastDigit(_Input);
 
     public override object Advanced() {
         Dictionary<string, string> digits = new() {
@@ -20,7 +17,7 @@ internal class Day01 : Day {
           ["nine"] = "n9e"
         };
         var converted = new List<string>();
-        Input.ForEach(line => {
+        _Input.ForEach(line => {
             foreach(var digit in digits) {
                 if(line.Contains(digit.Key)) {
                     line = line.Replace(digit.Key, digit.Value);
@@ -29,12 +26,12 @@ internal class Day01 : Day {
             converted.Add(line);
         });
         
-        return Parse(converted);
+        return GetFirstAndLastDigit(converted);
     }
 
     #region Private
 
-    private static int Parse(List<string> input) {
+    protected int GetFirstAndLastDigit(List<string> input) {
         var result = 0;
         input.ForEach(line => {
             var digitLine = string.Empty;

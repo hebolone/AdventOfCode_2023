@@ -6,8 +6,12 @@ internal abstract class Day {
 
     public abstract object Advanced();
 
-    public List<string> Input { get; set; } = [];
-
     public bool IsTest { get; set; } = false;
+
+    public void SetInput(List<string> input) => Parse(input);
+
+    protected List<string> _Input = [];
+
+    protected virtual void Parse(List<string> input) { _Input = input; }
 
 }

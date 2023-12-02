@@ -26,7 +26,7 @@ internal class DaysBuilder(string basePath) : IDaysBuilder {
             //  Read input file
             var solver = _Days[idToSolve];
             var isTest = _TestDays.Contains(idToSolve);
-            solver.Input = ReadInput(idToSolve, isTest);
+            solver.SetInput(ReadInput(idToSolve, isTest));
 
             //  Get solution
             var results = new List<Result>();
