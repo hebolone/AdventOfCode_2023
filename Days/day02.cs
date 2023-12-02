@@ -9,17 +9,8 @@ namespace Days;
 internal class Day02 : Day {
 
     private record Game(int Id, List<Set> Sets) {
-        
-        public (int red, int green, int blue) GetMaximum() => (
-                GetMaximumPerColor(TColor.RED),
-                GetMaximumPerColor(TColor.GREEN),
-                GetMaximumPerColor(TColor.BLUE)
-            );
 
-        public int Power() {
-            var minimums = GetMaximum();
-            return minimums.red * minimums.green * minimums.blue;
-        }
+        public int Power() => GetMaximumPerColor(TColor.RED) * GetMaximumPerColor(TColor.GREEN) * GetMaximumPerColor(TColor.BLUE);
         
         private int GetMaximumPerColor(TColor color) {
             var listOfColorsLaunches = new List<int>();
@@ -36,7 +27,7 @@ internal class Day02 : Day {
     };
     private record Launch(TColor Color, int Number);
     private enum TColor { RED, GREEN, BLUE }
-    private List<Game> _Games = new();
+    private readonly List<Game> _Games = [];
 
     public override object Basic() {
         Set question = new() {
@@ -59,7 +50,7 @@ internal class Day02 : Day {
         return powers.Sum();
     }
 
-    #region Private
+    #region Protected
 
     protected override void Parse(List<string> input) {
         Regex regex = new(@"Game (?<game_id>\d+):(?<sets>.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -74,6 +65,10 @@ internal class Day02 : Day {
             }
         });
     }
+
+    #endregion
+
+    #region Private
 
     private static List<Set> ParseSets(string input) {
         var retValue = new List<Set>();
