@@ -1,9 +1,3 @@
-using System.ComponentModel;
-using System.Data;
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-
 namespace Days;
 
 internal class Day02 : Day {

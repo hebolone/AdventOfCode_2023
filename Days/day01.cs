@@ -2,7 +2,7 @@ namespace Days;
 
 internal class Day01 : Day {
 
-    public override object Basic() => GetFirstAndLastDigit(_Input);
+    public override object Basic() => DoWork(_Input);
 
     public override object Advanced() {
         Dictionary<string, string> digits = new() {
@@ -26,12 +26,12 @@ internal class Day01 : Day {
             converted.Add(line);
         });
         
-        return GetFirstAndLastDigit(converted);
+        return DoWork(converted);
     }
 
     #region Private
 
-    protected int GetFirstAndLastDigit(List<string> input) {
+    protected static int DoWork(List<string> input) {
         var result = 0;
         input.ForEach(line => {
             var digitLine = string.Empty;
