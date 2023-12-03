@@ -56,8 +56,12 @@ internal class DaysBuilder(string basePath) : IDaysBuilder {
     }
 
     public IDaysBuilder SetTests(params int [] ids) {
-        foreach(var i in ids) {
-            _TestDays.Add(i);
+        if(ids.Count() == 0) {
+            _TestDays.Add(_Days.Max(d => d.Key));
+        } else {
+            foreach(var i in ids) {
+                _TestDays.Add(i);
+            }
         }
 
         return this;

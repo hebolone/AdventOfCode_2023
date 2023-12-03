@@ -4,7 +4,8 @@ var daysBuilder = new DaysBuilder(basePath: inputFilesDir);
 
 daysBuilder
     //.AddDay(1, new Day01())
-    .AddDay(2, new Day02())
-    //.SetTests(2)
-    .Solve()
+    //.AddDay(2, new Day02())
+    .AddDay(3, new Day03())
+    //.SetTests()
+    .Solve(solveType: TSolveType.ADVANCED)
     ;
