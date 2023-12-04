@@ -89,7 +89,7 @@ internal class Board<T> : IEnumerable<T> {
 
     public IEnumerator<T> GetEnumerator() => _Cells.GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator() => _Cells.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
 
     #endregion
 

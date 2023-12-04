@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Builder;
 
 internal class DaysBuilder(string basePath) : IDaysBuilder {
@@ -32,14 +34,18 @@ internal class DaysBuilder(string basePath) : IDaysBuilder {
             var results = new List<Result>();
             switch(solveType) {
                 case TSolveType.BASIC:
-                    results.Add(new(idToSolve, solver.Basic(), solveType, isTest));
+                    var executionDatasBasic = Execution(solver.Basic);
+                    results.Add(new(idToSolve, executionDatasBasic.result, solveType, isTest, executionDatasBasic.elapsedMilliseconds));
                     break;
                 case TSolveType.ADVANCED:
-                    results.Add(new(idToSolve, solver.Advanced(), solveType, isTest));
+                    var executionDatasAdvanced = Execution(solver.Advanced);
+                    results.Add(new(idToSolve, executionDatasAdvanced.result, solveType, isTest, executionDatasAdvanced.elapsedMilliseconds));
                     break;
                 default:
-                    results.Add(new(idToSolve, solver.Basic(), TSolveType.BASIC, isTest));
-                    results.Add(new(idToSolve, solver.Advanced(), TSolveType.ADVANCED, isTest));
+                    var executionDatasBothBasic = Execution(solver.Basic);
+                    var executionDatasBothAdvanced = Execution(solver.Advanced);
+                    results.Add(new(idToSolve, executionDatasBothBasic.result, TSolveType.BASIC, isTest, executionDatasBothBasic.elapsedMilliseconds));
+                    results.Add(new(idToSolve, executionDatasBothAdvanced.result, TSolveType.ADVANCED, isTest, executionDatasBothAdvanced.elapsedMilliseconds));
                     break;
             }
 
@@ -90,6 +96,14 @@ internal class DaysBuilder(string basePath) : IDaysBuilder {
 
     private string GetInputFileName(int id, bool isTest) => Path.Combine(_BasePath, $"day_{id:00.##}{(isTest ? "_test" : "")}.txt");
     
+    private (object result, long elapsedMilliseconds) Execution(Func<object> func) {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+        var result = func();
+        stopWatch.Stop();
+        return (result, stopWatch.ElapsedMilliseconds);
+    }
+
     #endregion
 
 }

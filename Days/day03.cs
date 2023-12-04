@@ -20,9 +20,8 @@ internal class Day03 : Day {
     public override object Basic() => _Numbers.Where(n => CheckIfValidNumber(n)).Sum(n => n.TotalValue);
     
     public override object Advanced() {
-        int retValue = 0;
-        var gears = FindGears();
-        gears.ForEach(g => {
+        var retValue = 0;
+        FindGears().ForEach(g => {
             retValue += g.Number1.TotalValue * g.Number2.TotalValue;
         });
         return retValue;
