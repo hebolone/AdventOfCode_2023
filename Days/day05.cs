@@ -11,7 +11,6 @@ internal class Day05 : Day {
         public int MoveNext() => ++CurrentLevel;
     }
     private readonly DictoLevels _DictoLevels = new() {
-        [0] = "seeds:", 
         [1] = "seed-to-soil map:",
         [2] = "soil-to-fertilizer map:", 
         [3] = "fertilizer-to-water map:", 
@@ -20,10 +19,15 @@ internal class Day05 : Day {
         [6] = "temperature-to-humidity map:",
         [7] = "humidity-to-location map:"
     };
+    private List<int> _Seeds = [];
 
     public override object Basic() {
-        //  First level is "seeds"
+        var currentLevel = 1;
+        _Seeds.ForEach(s => {
+            var converters = _TransformationLevel[_DictoLevels[currentLevel]];
 
+        });
+        
         //  Proceed to next level
 
         return -1;
@@ -48,6 +52,10 @@ internal class Day05 : Day {
                 } else {
                     if(acceptedHeaders.Contains(line)) {
                         currentLevel = line;
+                    } else {
+                        //  Seeds section
+                        var seeds = line.Split(":")[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                        _Seeds = seeds.Select(s => int.Parse(s)).ToList();
                     }
                 }
             }
@@ -64,6 +72,16 @@ internal class Day05 : Day {
         } else {
             _TransformationLevel.Add(level, [ converter ]);
         }
+    }
+
+    private int Convert(int input, List<Converter> converters) {
+        var retValue = input;
+        converters.ForEach(c => {
+            if(input >= c.Source && input < c.Source + c.Range) {
+                retValue = c.Destination + input - c.Source;
+            }
+        });	
+        return retValue;
     }
 
     #endregion
