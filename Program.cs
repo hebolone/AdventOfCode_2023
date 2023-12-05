@@ -1,5 +1,5 @@
-﻿var inputFilesDir = @"C:\Users\simonep\source\repos\AoC\Aoc\Input\";
-//var inputFilesDir = @"/home/simone/Scrivania/AdventOfCode/2023/";
+﻿//var inputFilesDir = @"C:\Users\simonep\source\repos\AoC\Aoc\Input\";
+var inputFilesDir = @"/media/simone/datas/work/csharp/AdventOfCode_2023/Input";
 var daysBuilder = new DaysBuilder(basePath: inputFilesDir);
 
 daysBuilder
@@ -9,5 +9,5 @@ daysBuilder
     //.AddDay(4, new Day04())
     .AddDay(5, new Day05())
     .SetTests()
-    .Solve()
+    .Solve(solveType: TSolveType.ADVANCED)
     ;
