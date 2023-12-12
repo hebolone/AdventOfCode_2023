@@ -1,5 +1,5 @@
-﻿//var inputFilesDir = @"C:\Users\simonep\source\repos\AoC\Aoc\Input\";
-var inputFilesDir = @"/media/simone/datas/work/csharp/AdventOfCode_2023/Input";
+﻿var inputFilesDir = @"C:\Users\simonep\source\repos\AoC\Aoc\Input\";
+//var inputFilesDir = @"/media/simone/datas/work/csharp/AdventOfCode_2023/Input";
 var daysBuilder = new DaysBuilder(basePath: inputFilesDir);
 
 daysBuilder

@@ -7,13 +7,14 @@ internal class Day05 : Day {
     private record Converter(long Destination, long Source, long Range) {
         public (long From, long To) ConvertedRange => (Source, Source + Range - 1);
         public long Delta => Destination - Source;
-        public override string ToString() => $"{Destination} {Source} {Range} ({ConvertedRange.From}-{ConvertedRange.To},{Delta})";
+        public override string ToString() => $"{Destination} {Source} {Range} ({ConvertedRange.From}->{ConvertedRange.To}, {Delta})";
     }
     private record SeedRange(long From, long Length);
     private class DictoLevels : Dictionary<int, List<Converter>> {
         public int CurrentLevel { get; set; } = 0;
         public List<Converter>? CurrentConverters => CurrentLevel > 0 && CurrentLevel <= this.Count() ? this[CurrentLevel] : null;
         public int? MoveNext() => CurrentLevel < this.Count ? ++CurrentLevel : null;
+        public int? MovePrevious() => CurrentLevel > 1 ? --CurrentLevel : null;
         public void ResetLevels() => CurrentLevel = 0;
         public void AddConverter(int level, Converter converter) {
             if(this.ContainsKey(level)) {
@@ -41,49 +42,75 @@ internal class Day05 : Day {
 
         _DictoLevels.ResetLevels();
         Tree<Converter> tree = new();
+        var from = 79L;
+        var to = 92L;
+        var startingConverter = new Converter(from, from, to);
+        tree.AddNode(startingConverter);
+        while(_DictoLevels.MoveNext() != null) {
+            var convertersInRange = GetConverterInRange(_DictoLevels.CurrentConverters, from, to);
+            if(convertersInRange.Count() == 1) {
+                tree.AddNode(convertersInRange.First(), tree.GetRoot());
+
+            }
+        }
+
+
+
+        // _DictoLevels.CurrentLevel = _DictoLevels.Count;
+        // var converters = _DictoLevels.CurrentConverters?.OrderBy(i => i.Destination).ToList();
+        // do {
+        //     //  Go in reverse order
+        //     //  If I am on the bottom, I need to start from the lowest destination
+        //     converters = _DictoLevels.CurrentConverters;
+        //     foreach(var conv in converters)
+        //         Console.WriteLine($"Level: {_DictoLevels.CurrentLevel}, Converters: {conv}");
+        // } while (_DictoLevels.MovePrevious() != null);
+
+        //-----------------------------------------------------------------------------------------
         //tree.AddNode(new Converter(79, 79, 92));
         //GetConvertersTree(tree, 79, 92);
 
         //IEnumerable<Converter> destinationConverters;
-        var from = 79L;
-        var to = 92L;
-        IEnumerable<Converter>? converters;
-        Console.WriteLine($"Starting -> from = {from}, to = {to}");
-        while(_DictoLevels.MoveNext() != null) {
-            converters = _DictoLevels.CurrentConverters;
-            if(converters == null) {
-                throw new Exception($"No converters found at level {_DictoLevels.CurrentLevel}");
-            } else {
-                converters = SelectConverterInRange(converters!, from, to);
 
-                //tree.AddNode()
+        // var from = 79L;
+        // var to = 92L;
+        // IEnumerable<Converter>? converters;
+        // Console.WriteLine($"Starting -> from = {from}, to = {to}");
+        // while(_DictoLevels.MoveNext() != null) {
+        //     converters = _DictoLevels.CurrentConverters;
+        //     if(converters == null) {
+        //         throw new Exception($"No converters found at level {_DictoLevels.CurrentLevel}");
+        //     } else {
+        //         converters = SelectConverterInRange(converters!, from, to);
 
-                if(converters.Count() > 1) {
-                    foreach(var conv in converters) {
-                        Console.WriteLine($" -> {conv}");
-                        //  Let's split
-                        if(conv.ConvertedRange.From <= from && conv.ConvertedRange.To >= from) {
-                            Console.WriteLine($" --> {from}, {conv.ConvertedRange.To} ({conv.Delta})");
-                        } else if(conv.ConvertedRange.From <= to && conv.ConvertedRange.To >= to) {
-                            Console.WriteLine($" --> {conv.ConvertedRange.From}, {to} ({conv.Delta})");
+        //         //tree.AddNode()
+
+        //         if(converters.Count() > 1) {
+        //             foreach(var conv in converters) {
+        //                 Console.WriteLine($" -> {conv}");
+        //                 //  Let's split
+        //                 if(conv.ConvertedRange.From <= from && conv.ConvertedRange.To >= from) {
+        //                     Console.WriteLine($" --> {from}, {conv.ConvertedRange.To} ({conv.Delta})");
+        //                 } else if(conv.ConvertedRange.From <= to && conv.ConvertedRange.To >= to) {
+        //                     Console.WriteLine($" --> {conv.ConvertedRange.From}, {to} ({conv.Delta})");
                             
-                        }
-                        //var pFrom = Convert(from, converters.ToList());
-                    }
-                    Console.WriteLine($"");
-                }
+        //                 }
+        //                 //var pFrom = Convert(from, converters.ToList());
+        //             }
+        //             Console.WriteLine($"");
+        //         }
 
-                from = Convert(from, converters.ToList());
-                to = Convert(to, converters.ToList());
-                Console.WriteLine($"Level {_DictoLevels.CurrentLevel} -> Converters found: {converters?.Count() ?? 0}, from = {from}, to = {to}");
-                //foreach(var conv in converters) {
-                //}
+        //         from = Convert(from, converters.ToList());
+        //         to = Convert(to, converters.ToList());
+        //         Console.WriteLine($"Level {_DictoLevels.CurrentLevel} -> Converters found: {converters?.Count() ?? 0}, from = {from}, to = {to}");
+        //         //foreach(var conv in converters) {
+        //         //}
 
-            }
-            //var acceptableConverters = SelectConverterInRange(converters, Convert(from, ))
-        }
+        //     }
+        //     //var acceptableConverters = SelectConverterInRange(converters, Convert(from, ))
+        // }
 
-        Console.WriteLine($"Final result: {from}");
+        // Console.WriteLine($"Final result: {from}");
 
         // var selectedLevel = _DictoLevels.Count;
         // var currentConverter = SelectLowestConverter(_TransformationLevel[_DictoLevels[selectedLevel]]);
@@ -148,36 +175,33 @@ internal class Day05 : Day {
     //     }
     // }
 
-    private long Convert(long input, List<Converter> converters) {
+    private static long Convert(long input, List<Converter> converters) {
         var retValue = input;
         converters.ForEach(c => {
             if(input >= c.Source && input < c.Source + c.Range) {
                 retValue = c.Destination + input - c.Source;
             }
-            // if(input >= c.ConvertedRange.From && input < c.ConvertedRange.To) {
-            //     retValue = input + c.Delta;
-            // }
         });	
         return retValue;
     }
 
-    private void ParseSeedsBasic(string[]? seedsDatas) {
-        if(seedsDatas != null) {
-            _Seeds = seedsDatas.Select(s => long.Parse(s)).ToList();
-        } else {
-            throw new ArgumentNullException("Invalid seeds datas.");
-        }
-    }
+    // private void ParseSeedsBasic(string[]? seedsDatas) {
+    //     if(seedsDatas != null) {
+    //         _Seeds = seedsDatas.Select(s => long.Parse(s)).ToList();
+    //     } else {
+    //         throw new ArgumentNullException("Invalid seeds datas.");
+    //     }
+    // }
 
-    private void ParseSeedsAdvanced(string[]? seedsDatas) {
-        if(seedsDatas != null) {
-            for(int i = 0; i < seedsDatas.Length; i += 2) {
-                _SeedRanges.Add(new(long.Parse(seedsDatas[i]), long.Parse(seedsDatas[i + 1])));
-            }
-        } else {
-            throw new ArgumentNullException("Invalid seeds datas.");
-        }
-    }
+    // private void ParseSeedsAdvanced(string[]? seedsDatas) {
+    //     if(seedsDatas != null) {
+    //         for(int i = 0; i < seedsDatas.Length; i += 2) {
+    //             _SeedRanges.Add(new(long.Parse(seedsDatas[i]), long.Parse(seedsDatas[i + 1])));
+    //         }
+    //     } else {
+    //         throw new ArgumentNullException("Invalid seeds datas.");
+    //     }
+    // }
 
     private long ConvertAll(long input) {
         var currentSeed = input;
@@ -203,10 +227,10 @@ internal class Day05 : Day {
     
     // private Converter SelectLowestConverter(List<Converter> converters) => converters.OrderBy(c => c.Destination).First();
 
-    private IEnumerable<Converter> SelectConverterInRange(IEnumerable<Converter> converters, long from, long to) =>
+    private IEnumerable<Converter>? GetConverterInRange(IEnumerable<Converter>? converters, long from, long to) =>
         //  Select a converter which gives me a result between from and to
         //  This is an intersection
-        converters.Where(
+        converters?.Where(
             c => {
                 var x1 = c.ConvertedRange.From;
                 var x2 = c.ConvertedRange.To;
@@ -221,6 +245,16 @@ internal class Day05 : Day {
                     (y2 >= x1 && y2 <= x2);
             }
         );
+
+    private static List<Converter> SplitConverter(Converter converter, long edge) {
+        List<Converter> retValue = [];
+        if(converter.Source < edge && (converter.Source + converter.Range) > edge) {
+            var e = edge - converter.Source;
+            retValue.Add(new Converter(converter.Destination, converter.Source, e));
+            retValue.Add(new Converter(converter.Destination, converter.Source + e, converter.Range - e));
+        }
+	    return retValue;
+    }
     
     #endregion
 

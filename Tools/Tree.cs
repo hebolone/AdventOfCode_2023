@@ -12,6 +12,16 @@ internal class Tree<T> {
 
     public Node<T>? GetRoot() => _Datas.FirstOrDefault(i => i.Ancestor == null);
 
+    public static int GetLevel(Node<T> node) {
+        var retValue = 0;
+        Node<T>? pointer = node;
+        while(pointer != null) {
+            retValue++;
+            pointer = pointer.Ancestor;
+        }
+        return retValue;
+    }
+
     // public static int GetLevel(this Node<T> node) {
     //     return 0;
     // }
